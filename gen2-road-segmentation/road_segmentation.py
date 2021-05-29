@@ -4,7 +4,6 @@
 
 road-segmentation-adas-0001 running on selected camera.
 Run as:
-python3 -m pip install -r requirements.txt
 python3 road_segmentation.py -cam rgb
 Possible input choices (-cam):
 'rgb', 'left', 'right'

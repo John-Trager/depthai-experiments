@@ -4,9 +4,7 @@
 
 road-segmentation-adas-0001 running on selected camera.
 Run as:
-python3 road_segmentation.py -cam rgb
-Possible input choices (-cam):
-'rgb', 'left', 'right'
+python3 road_segmentation.py
 Blob created at http://luxonis.com:8080/ under openvino model zoo and selecting "road-segmentation-adas-0001"
 
 road-segmentation-adas-0001
@@ -23,15 +21,11 @@ import time
 import sys
 
 
-cam_options = ['rgb', 'left', 'right']
-
 parser = argparse.ArgumentParser()
-parser.add_argument("-cam", "--cam_input", help="select camera input source for inference", default='rgb', choices=cam_options)
-parser.add_argument("-nn", "--nn_model", help="select model path for inference", default='models/road-segmentation-adas-0001_12shave.blob', type=str)
+parser.add_argument("-nn", "--nn_model", help="select model path for inference", default='models/road-segmentation-adas-0001_12shaves.blob', type=str)
 
 args = parser.parse_args()
 
-cam_source = args.cam_input
 nn_path = args.nn_model
 
 nn_shape_x = 896
@@ -63,25 +57,12 @@ detection_nn.setNumInferenceThreads(2)
 
 cam=None
 # Define a source - color camera
-if cam_source == 'rgb':
-    cam = pipeline.createColorCamera()
-    cam.setPreviewSize(nn_shape_x,nn_shape_y)
-    cam.setInterleaved(False)
-    cam.preview.link(detection_nn.input)
-elif cam_source == 'left':
-    cam = pipeline.createMonoCamera()
-    cam.setBoardSocket(dai.CameraBoardSocket.LEFT)
-elif cam_source == 'right':
-    cam = pipeline.createMonoCamera()
-    cam.setBoardSocket(dai.CameraBoardSocket.RIGHT)
 
-if cam_source != 'rgb':
-    manip = pipeline.createImageManip()
-    manip.setResize(nn_shape_x,nn_shape_y)
-    manip.setKeepAspectRatio(True)
-    manip.setFrameType(dai.RawImgFrame.Type.BGR888p)
-    cam.out.link(manip.inputImage)
-    manip.out.link(detection_nn.input)
+cam = pipeline.createColorCamera()
+cam.setPreviewSize(nn_shape_x,nn_shape_y)
+cam.setInterleaved(False)
+cam.preview.link(detection_nn.input)
+
 
 cam.setFps(30)
 
